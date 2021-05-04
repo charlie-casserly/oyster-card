@@ -1,10 +1,9 @@
-require 'oyster-card.rb'
+require 'oyster-card'
 
 describe Oystercard do
- describe '#balance'do
+  describe '#balance' do
     it 'a freshly initialised card has a balance of 0' do
-        card = Oystercard.new
-        expect(card.balance).to eq 0
+      expect(subject.balance).to eq 0
     end
-end
+  end
 end
