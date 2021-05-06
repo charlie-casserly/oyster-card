@@ -18,28 +18,35 @@ describe Oystercard do
     end
   end
 
-  it 'new card is not in journey' do
-    expect(subject.in_journey).to eq false
-  end
+  describe '#touch_in' do
+    context 'with minimum fare' do
+      let(:card) { double(:oystercard, in_journey?: true, entry_station: 'station') }
+      
+      it 'is in journey after touched in' do
+        expect(card).to be_in_journey
+      end
 
-  it 'is in journey after touched in' do
-    subject.top_up(1)
-    subject.touch_in
-    expect(subject).to be_in_journey
+      it 'remembers the entry station when touching in' do
+        expect(card.entry_station).to eq('station')
+      end
+    end
+
+    it 'cannot touch in unless it contains more than minimum fare in balance' do
+      expect {subject.touch_in('station')}.to raise_error("Insufficient funds. Minimum fare #{Oystercard::MINIMUM_FARE}")
+    end
   end
 
   it 'is not in journey after being touched out' do
-    subject.top_up(1)
-    subject.touch_in
+    allow(subject).to receive(:in_journey) {true}
     subject.touch_out
     expect(subject).to_not be_in_journey
   end
 
-  it 'cannot touch in unless it contains more than minimum fare in balance' do
-    expect {subject.touch_in}.to raise_error("Insufficient funds. Minimum fare #{Oystercard::MINIMUM_FARE}")
+  it 'new card is not in journey' do
+    expect(subject.in_journey).to eq false
   end
 
   it 'charges me the minimum amount when I tap out' do
-    expect{subject.touch_out}.to change{subject.balance}.by -1
+    expect{subject.touch_out}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
   end
 end
