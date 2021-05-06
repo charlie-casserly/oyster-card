@@ -13,6 +13,7 @@ class Oystercard
     @balance = 0
     @journeys = []
     @current_journey = nil
+    @journeylog = Journeylog.new(self)
   end
 
   def top_up(amount)
