@@ -18,24 +18,28 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct' do
-    it 'deducts the #deduct amount from the balance' do
-      expect{subject.deduct 1}.to change{subject.balance}.by -1
-    end 
-  end
-
   it 'new card is not in journey' do
     expect(subject.in_journey).to eq false
   end
 
   it 'is in journey after touched in' do
+    subject.top_up(1)
     subject.touch_in
-    expect(subject.in_journey).to eq true
+    expect(subject).to be_in_journey
   end
 
   it 'is not in journey after being touched out' do
+    subject.top_up(1)
     subject.touch_in
     subject.touch_out
-    expect(subject.in_journey).to eq false
+    expect(subject).to_not be_in_journey
+  end
+
+  it 'cannot touch in unless it contains more than minimum fare in balance' do
+    expect {subject.touch_in}.to raise_error("Insufficient funds. Minimum fare #{Oystercard::MINIMUM_FARE}")
+  end
+
+  it 'charges me the minimum amount when I tap out' do
+    expect{subject.touch_out}.to change{subject.balance}.by -1
   end
 end
