@@ -37,11 +37,6 @@ describe Oystercard do
   end
 
   describe '#touch out' do
-    it 'is not in journey after being touched out' do
-      allow(subject).to receive(:in_journey) {true}
-      subject.touch_out('station2')
-      expect(subject).to_not be_in_journey
-    end
 
     it 'returns entry_station to nil after touching out' do
       subject.top_up(1)
@@ -51,14 +46,20 @@ describe Oystercard do
     end
   end
 
-  it 'new card is not in journey' do
-    expect(subject.in_journey?).to eq false
+  context 'when tapping in and out' do
+    it 'charges me the minimum amount' do
+      subject.top_up(1)
+      subject.touch_in('station')
+      expect{subject.touch_out('station2')}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
+    end
   end
 
-  it 'charges me the minimum amount when I tap out' do
-    expect{subject.touch_out('station2')}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
+  context 'when only tapping out' do
+    it 'charges me the penalty fare' do
+      expect{subject.touch_out('station2')}.to change{subject.balance}.by(-6)
+    end
   end
-
+  
   it 'begins with an empty list of journeys array' do
     expect(subject.journeys).to eq []
   end
