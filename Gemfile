@@ -10,3 +10,5 @@ group :development, :test do
   gem 'rspec', '~> 3.10'
   gem 'rubocop', '~> 1.13'
 end
+
+gem 'simplecov', require: false, group: :test
