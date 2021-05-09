@@ -1,4 +1,5 @@
 require_relative 'journey.rb'
+require_relative 'journeylog.rb'
 
 class Oystercard
   attr_reader :in_journey, :entry_station, :complete_journeys, :journey, :balance
